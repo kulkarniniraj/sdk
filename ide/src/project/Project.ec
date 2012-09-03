@@ -52,6 +52,31 @@ IDESettingsContainer settingsContainer
 CompilerConfig defaultCompiler;
 #endif
 
+static bool IsPathInsideOf(char * path, char * of)
+{
+   if(!path[0] || !of[0])
+      return false;  // What to do here? Ever used?
+   else
+   {
+      char ofPart[MAX_FILENAME], ofRest[MAX_LOCATION];
+      char pathPart[MAX_FILENAME], pathRest[MAX_LOCATION];
+      strcpy(ofRest, of);
+      strcpy(pathRest, path);
+      for(; ofRest[0] && pathRest[0];)
+      {
+         SplitDirectory(ofRest, ofPart, ofRest);
+         SplitDirectory(pathRest, pathPart, pathRest);
+         if(fstrcmp(pathPart, ofPart))
+            return false;
+      }
+      if(!ofRest[0] && !pathRest[0])  // paths are identical - should return false or true? (changed to false)
+         return false;
+      else if(!pathRest[0])           // not inside of, it's the other way around
+         return false;
+      return true;
+   }
+}
+
 // LEGACY BINARY EPJ LOADING
 
 SetBool ParseTrueFalseValue(char * string)
@@ -1186,6 +1211,16 @@ private:
          PathCatSlash(cfDir, ".configs");
          result = true;
       }
+      if(true)
+      {
+         char temp[MAX_LOCATION];
+         strcpy(temp, cfDir);
+         // Using a relative path makes it less likely to run into spaces issues
+         // Even with escaped spaces, there still seems to be issues including a config file
+         // in a path containing spaces
+         if(IsPathInsideOf(cfDir, topNode.path))
+            MakePathRelative(temp, topNode.path, cfDir);
+      }
       if(cfDir && cfDir[0] && cfDir[strlen(cfDir)-1] != '/')
          strcat(cfDir, "/");
       return result;
@@ -2092,7 +2127,12 @@ private:
                strcat(cfDir, "/");
          }
          else
-            strcpy(cfDir, "$(CF_DIR)");
+         {
+            GetIDECompilerConfigsDir(cfDir);
+            // Use CF_DIR environment variable for absolute paths only
+            if(cfDir[0] == '/' || (cfDir[0] && cfDir[1] == ':'))
+               strcpy(cfDir, "$(CF_DIR)");
+         }
 
          f.Printf("_CF_DIR = %s\n", cfDir);
          f.Printf("\n");
