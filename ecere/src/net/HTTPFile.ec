@@ -110,11 +110,18 @@ private class HTTPConnection : Socket
       int c;
       while(!file.done)
       {
+         bool gotEndLine = false;
          for(c = 0; c<count-1; c++)
          {
             if(buffer[c] == '\r' && buffer[c+1] == '\n')
+            {
+               gotEndLine = true;
                break;
+            }
          }   
+         if(!gotEndLine)
+            // Incomplete packet
+            return pos;
          if(c<count)
          {
             char * string = (char *)buffer;
@@ -130,7 +137,7 @@ private class HTTPConnection : Socket
             fwrite(buffer, 1, c, stdout);
             puts("");
             */
-         
+
             if(!c)
             {
                //if(file.openStarted)
@@ -195,45 +202,41 @@ private class HTTPConnection : Socket
          int read;
          if(file.chunked && !file.chunkSize)
          {
-            int pos = 0;
-            while(file.connection)
+            int pos = 0, c = 0;
+            char * string = null;
+            bool ready = false;
+            while(pos + c < (int)count-3)
             {
-               int c;
-               for(c = 0; c<count-1; c++)
+               if(buffer[pos+c] == '\r' && buffer[pos+c+1] == '\n')
                {
-                  if(buffer[c] == '\r' && buffer[c+1] == '\n')
-                     break;
-               }
-               if(c<count)
-               {
-                  
-                     /*
-                  if(GetCurrentThreadID() == network.mainThreadID)
+                  if(string)
                   {
-                     fwrite(buffer, 1, c, stdout);
-                     puts("");
+                     ready = true;
+                     pos += c + 2;
+                     if(buffer[pos] == '\r' && buffer[pos+1] =='\n') pos+= 2;
+                     break;
                   }
-                     */
-                  
-                  if(!c);
                   else
                   {
-                     char * string = (char *)buffer;
-                     file.chunkSize = strtol(string, null, 16);
-                     if(!file.chunkSize)
-                     {
-                        //connection.file = null;
-                        file.connection.file = null;
-                        file.connection = null;
-                     }
+                     pos += 2;
+                     c = 0;
                   }
-                  // return c+2;
-                  if(buffer[c] == '\r') c++;
-                  if(buffer[c] == '\n') c++;
-                  buffer += c;
-                  count -= c;
-                  pos += c;
-                  return pos;
+               }
+               else
+               {
+                  if(!string)
+                     string = buffer + pos;
+                  c++;
+               }
+            }
+            if(ready)
+            {
+               file.chunkSize = strtol(string, null, 16);
+               if(!file.chunkSize)
+               {
+                  //connection.file = null;
+                  file.connection.file = null;
+                  file.connection = null;
                }
             }
             return pos;
@@ -402,6 +405,8 @@ public:
             strcat(msg, server);
             strcat(msg, "\r\n");
             strcat(msg, "Accept-Charset: ISO-8859-1\r\n");
+            //strcat(msg, "Accept-Charset: UTF-8\r\n");
+            strcat(msg, "Connection: Keep-Alive\r\n");
             if(referer)
             {
                strcat(msg, "Referer: ");
