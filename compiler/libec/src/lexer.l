@@ -9,6 +9,7 @@ IDENT    {L}({L}|{D})*
 %{
 import "ecdefs"
 #define YYLTYPE Location
+#define YY_NEVER_INTERACTIVE 1    // Avoid calling isatty on eC File object
 
 #include "grammar.h"
 
@@ -448,7 +449,7 @@ int preprocessor()
    {
       char includeFile[MAX_LOCATION] = "";
 
-      strcpy(line, line+c);
+      memmove(line, line+c, strlen(line+c)+1);
       TrimLSpaces(line, line);
       if(line[0] == '\"')
       {
