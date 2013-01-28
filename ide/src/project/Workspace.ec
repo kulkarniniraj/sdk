@@ -250,13 +250,23 @@ public:
          
          file.Printf("\n   Execution Data\n");
          if(commandLineArgs && commandLineArgs[0])
-            file.Printf("\n      Command Line Arguments = %s\n", commandLineArgs);
+         {
+            file.Printf("\n      Command Line Arguments = ");
+            file.Puts(commandLineArgs);
+            file.Printf("\n");
+         }
 
          if(environmentVars.count)
          {
             file.Printf("\n      Environment Variables\n\n");
             for(v : environmentVars)
-               file.Printf("       ~ %s = %s\n", v.name, v.string);
+            {
+               file.Printf("       ~ ");
+               file.Puts(v.name);
+               file.Printf(" = ");
+               file.Puts(v.string);
+               file.Printf("\n");
+            }
          }
 
          file.Printf("\n   Debugger Data\n");

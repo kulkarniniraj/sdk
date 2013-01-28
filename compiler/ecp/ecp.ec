@@ -1458,8 +1458,9 @@ class PrecompApp : Application
          printf($"Syntax:\n   ecp [-t <target platform>] [-cpp <c preprocessor>] [-o <output>] [-symbols <outputdir>] [-I<includedir>]* [-isystem <sysincludedir>]* [-D<definition>]* -c <input>\n");
       else
       {
-         char command[1024];
+         char command[MAX_F_STRING*3];
          DualPipe cppOutput;
+         command[sizeof(command)-1] = 0;
          
          SetGlobalContext(globalContext);
          SetTopContext(globalContext);
@@ -1488,7 +1489,7 @@ class PrecompApp : Application
                DeleteFile(outputFilePath);
          }
          
-         sprintf(command, "%s%s -x c -E \"%s\"", cppCommand, cppOptions ? cppOptions : "", GetSourceFile());
+         snprintf(command, sizeof(command), "%s%s -x c -E \"%s\"", cppCommand, cppOptions ? cppOptions : "", GetSourceFile());
 
          if((cppOutput = DualPipeOpen({ output = true }, command)))
          {

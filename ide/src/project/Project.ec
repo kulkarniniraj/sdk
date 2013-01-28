@@ -1998,6 +1998,7 @@ private:
             }
             f.Printf("\nFORCE_64_BIT = %s", compiler.supportsBitDepth ? "-m64" : "");
             f.Printf("\nFORCE_32_BIT = %s", compiler.supportsBitDepth ? "-m32" : "");
+            f.Printf("\n");
 
             delete f;
          }

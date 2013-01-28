@@ -2404,7 +2404,7 @@ extern unsigned int __ecereNameSpace__ecere__sys__FileExists(char *  fileName);
 
 extern unsigned int __ecereNameSpace__ecere__sys__DeleteFile(char *  fileName);
 
-extern int sprintf(char * , char * , ...);
+extern int snprintf(char * , int, char * , ...);
 
 extern struct __ecereNameSpace__ecere__com__Instance * __ecereNameSpace__ecere__sys__DualPipeOpen(unsigned int mode, char *  commandLine);
 
@@ -2628,9 +2628,10 @@ if(!valid)
 printf(__ecereNameSpace__ecere__GetTranslatedString(__thisModule, "Syntax:\n   ecp [-t <target platform>] [-cpp <c preprocessor>] [-o <output>] [-symbols <outputdir>] [-I<includedir>]* [-isystem <sysincludedir>]* [-D<definition>]* -c <input>\n", (((void *)0))));
 else
 {
-char command[1024];
+char command[3075LL];
 struct __ecereNameSpace__ecere__com__Instance * cppOutput;
 
+command[sizeof command - 1] = (char)0;
 SetGlobalContext(globalContext);
 SetTopContext(globalContext);
 SetCurrentContext(globalContext);
@@ -2655,7 +2656,7 @@ char * outputFilePath = GetOutputFile();
 if(__ecereNameSpace__ecere__sys__FileExists(outputFilePath))
 __ecereNameSpace__ecere__sys__DeleteFile(outputFilePath);
 }
-sprintf(command, "%s%s -x c -E \"%s\"", cppCommand, cppOptions ? cppOptions : "", GetSourceFile());
+snprintf(command, sizeof command, "%s%s -x c -E \"%s\"", cppCommand, cppOptions ? cppOptions : "", GetSourceFile());
 if((cppOutput = __ecereNameSpace__ecere__sys__DualPipeOpen((((unsigned int)(0x1))), command)))
 {
 int exitCode;

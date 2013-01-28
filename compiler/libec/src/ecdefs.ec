@@ -1196,6 +1196,7 @@ void Compiler_Error(char * format, ...)
       {
          va_list args;
          char string[10000];
+         string[sizeof(string)-1] = 0;
 
          if(yylloc.start.included)
          {
@@ -1223,7 +1224,7 @@ void Compiler_Error(char * format, ...)
          printf($":%d:%d: error: ", yylloc.start.line, yylloc.start.charPos);
          //printf(":%d: error: ", yylloc.start.line);
          va_start(args, format);
-         vsprintf(string,format,args);
+         vsnprintf(string, sizeof(string), format, args);
          va_end(args);
          fputs(string, stdout);
          __thisModule.application.exitCode = 1;
@@ -1245,6 +1246,7 @@ void Compiler_Warning(char * format, ...)
    {
       va_list args;
       char string[10000];
+      string[sizeof(string)-1] = 0;
 
       if(yylloc.start.included)
       {
@@ -1263,7 +1265,7 @@ void Compiler_Warning(char * format, ...)
       printf($":%d:%d: warning: ", yylloc.start.line, yylloc.start.charPos);
       //printf(":%d: warning: ", yylloc.start.line);
       va_start(args, format);
-      vsprintf(string,format,args);
+      vsnprintf(string, sizeof(string), format, args);
       va_end(args);
       fputs(string, stdout);
       numWarnings++;

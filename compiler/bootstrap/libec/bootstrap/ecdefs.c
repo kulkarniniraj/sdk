@@ -923,6 +923,10 @@ size_t fread(void * ptr, size_t size, size_t nmemb, FILE * stream);
 
 size_t fwrite(const void * ptr, size_t size, size_t nmemb, FILE * stream);
 
+int vsnprintf(char *, size_t, const char *, ...);
+
+int snprintf(char * str, size_t, const char * format, ...);
+
 int fseek(FILE * stream, long offset, int whence);
 
 long ftell(FILE * stream);
@@ -1549,8 +1553,6 @@ extern char *  __ecereNameSpace__ecere__GetTranslatedString(struct __ecereNameSp
 
 extern struct __ecereNameSpace__ecere__com__Instance * __thisModule;
 
-extern int vsprintf(char * , const char * , __builtin_va_list);
-
 extern int fputs(char * , void *  stream);
 
 extern struct __ecereNameSpace__ecere__com__Class * __ecereClass___ecereNameSpace__ecere__com__NameSpace;
@@ -1613,6 +1615,7 @@ if(!parsingType)
 va_list args;
 char string[10000];
 
+string[sizeof string - 1] = (char)0;
 if(yylloc.start.included)
 {
 __ecereNameSpace__ecere__sys__GetWorkingDir(string, sizeof string);
@@ -1626,7 +1629,7 @@ __ecereNameSpace__ecere__sys__PathCat(string, sourceFile);
 printf(string);
 printf(__ecereNameSpace__ecere__GetTranslatedString(__thisModule, ":%d:%d: error: ", (((void *)0))), yylloc.start.line, yylloc.start.charPos);
 __builtin_va_start(args, format);
-vsprintf(string, format, args);
+vsnprintf(string, sizeof string, format, args);
 __builtin_va_end(args);
 fputs(string, (bsl_stdout()));
 ((struct __ecereNameSpace__ecere__com__Application *)(((char *)((struct __ecereNameSpace__ecere__com__Module *)(((char *)__thisModule + 12)))->application + 300)))->exitCode = 1;
@@ -1652,6 +1655,7 @@ if(inCompiler)
 va_list args;
 char string[10000];
 
+string[sizeof string - 1] = (char)0;
 if(yylloc.start.included)
 {
 __ecereNameSpace__ecere__sys__GetWorkingDir(string, sizeof string);
@@ -1665,7 +1669,7 @@ __ecereNameSpace__ecere__sys__PathCat(string, sourceFile);
 printf(string);
 printf(__ecereNameSpace__ecere__GetTranslatedString(__thisModule, ":%d:%d: warning: ", (((void *)0))), yylloc.start.line, yylloc.start.charPos);
 __builtin_va_start(args, format);
-vsprintf(string, format, args);
+vsnprintf(string, sizeof string, format, args);
 __builtin_va_end(args);
 fputs(string, (bsl_stdout()));
 numWarnings++;
