@@ -1996,6 +1996,8 @@ private:
                   f.Puts(l);
                }
             }
+            f.Printf("\nFORCE_64_BIT = %s", compiler.supportsBitDepth ? "-m64" : "");
+            f.Printf("\nFORCE_32_BIT = %s", compiler.supportsBitDepth ? "-m32" : "");
 
             delete f;
          }
@@ -2392,7 +2394,7 @@ private:
             f.Printf(" $(OPTIMIZE)");
             forceBitDepth = (options && options.buildBitDepth) || numCObjects;
             if(forceBitDepth)
-               f.Printf((!options || !options.buildBitDepth || options.buildBitDepth == bits32) ? " -m32" : " -m64");
+               f.Printf(" %s",(!options || !options.buildBitDepth || options.buildBitDepth == bits32) ? "$(FORCE_32_BIT)" : "$(FORCE_64_BIT)");
             f.Printf(" $(FPIC)");
          }
          switch(GetWarnings(config))
@@ -2439,7 +2441,7 @@ private:
          f.Printf("ifneq \"$(TARGET_TYPE)\" \"%s\"\n", TargetTypeToMakefileVariable(staticLibrary));
          f.Printf("OFLAGS +=");
          if(forceBitDepth)
-            f.Printf((!options || !options.buildBitDepth || options.buildBitDepth == bits32) ? " -m32" : " -m64 \\\n");
+            f.Printf((!options || !options.buildBitDepth || options.buildBitDepth == bits32) ? " $(FORCE_32_BIT)" : " $(FORCE_64_BIT) \\\n");
 
          if(GetProfile(config))
             f.Printf(" -pg");

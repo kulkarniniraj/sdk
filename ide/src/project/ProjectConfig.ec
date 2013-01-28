@@ -348,6 +348,7 @@ public:
          console = console,
          compress = compress,
          excludeFromBuild = excludeFromBuild,
+         buildBitDepth = buildBitDepth,
          preprocessorDefinitions = CopyArrayString(preprocessorDefinitions),
          includeDirs = CopyArrayString(includeDirs),
          libraries = CopyArrayString(libraries),
