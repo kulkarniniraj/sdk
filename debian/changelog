@@ -1,4 +1,23 @@
-ecere-sdk (0.44.01-1) experimental; urgency=low
+ecere-sdk (0.44.01-0ubuntu1.1) quantal; urgency=low
+
+  * Fixed issue with 'arch: all' packages preventing installing on 64 bit system
+    Fixed issue with GCC 4.7 whereas .bmp files would not load properly
+    Fixed build issue with ARM build
+    Fixed build issue with big endian (PPC) builds
+    Fixed broken HTTP protocol
+    Fixed debugger breakpoint line number issues
+    Fixed missing visual color in color drop box
+    Fixed wrong font transform and kerning when using different attributes for the same face
+    Fixed unlocking a mutex in runtime library (GuiApplication) when it has not been locked
+    In IDE and Compiler, fixed buffer overflows in local char arrays
+    In FileDialog, reordered if condition to avoid UMR
+    In runtime library object system, resolved conditional jumps based on uninitialized values reported by Valgrind
+    In Compiler, fixed crashes by properly reinitializing members of union inside Specifier class
+    In Compiler, fixed bad memory access in lexer showing up in Valgrind
+
+ -- Jerome St-Louis <jerstlouis@gmail.com>  Mon, 28 Jan 2013 06:48:00 -0500
+
+ecere-sdk (0.44.01-0ubuntu1) quantal; urgency=low
 
   * Initial packaging of Ecere SDK for Debian. (Closes: #665332, LP: #394998)
 
