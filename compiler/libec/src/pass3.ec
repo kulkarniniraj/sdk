@@ -88,6 +88,7 @@ static bool ReplaceClassSpec(OldList specs, Specifier spec, bool param)
             //spec.name = CopyString(name);
             delete spec.name;
             spec.type = structSpecifier;
+            spec.baseSpecs = null;
             spec.id = MkIdentifier(name);
             spec.list = null;
             spec.definitions = null;
@@ -103,6 +104,8 @@ static bool ReplaceClassSpec(OldList specs, Specifier spec, bool param)
                curContext = ctx;
             }
             */
+            spec.ctx = null;
+            spec.addNameSpace = false;
          }
          else if(_class && _class.type == noHeadClass)
          {
@@ -115,9 +118,12 @@ static bool ReplaceClassSpec(OldList specs, Specifier spec, bool param)
             FullClassNameCat(name, _class.fullName, false);
             delete spec.name;
             spec.type = structSpecifier;
+            spec.baseSpecs = null;
             spec.id = MkIdentifier(name);
             spec.list = null;
             spec.definitions = null;
+            spec.ctx = null;
+            spec.addNameSpace = false;
          }
          else if(_class)
          {
@@ -176,7 +182,10 @@ static bool ReplaceClassSpec(OldList specs, Specifier spec, bool param)
             spec.type = structSpecifier;
             spec.id = MkIdentifier("__ecereNameSpace__ecere__com__Instance");
             spec.list = null;
+            spec.baseSpecs = null;
             spec.definitions = null;
+            spec.ctx = null;
+            spec.addNameSpace = false;
          }
 
          if(_class && _class.dataTypeString && !strcmp(_class.dataTypeString /*fullName*/, "char *"))
