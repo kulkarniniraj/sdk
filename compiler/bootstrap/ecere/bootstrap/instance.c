@@ -1155,7 +1155,16 @@ int offsetClass, totalSizeClass;
 for(baseClass = base; baseClass->base; baseClass = baseClass->base)
 ;
 if(base && !base->internalDecl && (base->type == 5 || base->type == 1 || base->type == 0))
+{
+if(base->type == 1 && type == 0)
+type = 5;
+else
 type = base->type;
+}
+if(base && (_class->type == 0 || _class->type == 5 || _class->type == 1) && (base->type == 3 || base->type == 2 || base->type == 4))
+{
+type = base->type;
+}
 if(type == 4)
 {
 if(base->type != 4)
@@ -1205,8 +1214,9 @@ _class->sizeClass = totalSizeClass;
 {
 struct __ecereNameSpace__ecere__com__Method * method, * next;
 struct __ecereNameSpace__ecere__com__Class * b;
+unsigned int needUpdate = (mod != (base->templateClass ? base->templateClass : base) || _class->vTblSize != mod->vTblSize);
 
-if(mod->base && mod->base->base && mod->base->vTblSize > baseClass->vTblSize && (mod != (base->templateClass ? base->templateClass : base) || _class->vTblSize != mod->vTblSize))
+if(mod->base && mod->base->base && mod->base->vTblSize > baseClass->vTblSize && needUpdate)
 {
 _class->vTblSize += mod->base->vTblSize - baseClass->vTblSize;
 _class->_vTbl = __ecereNameSpace__ecere__com__eSystem_Renew(_class->_vTbl, sizeof(void *) * (_class->vTblSize));
@@ -1216,6 +1226,7 @@ for(method = (struct __ecereNameSpace__ecere__com__Method *)__ecereProp___ecereN
 next = (struct __ecereNameSpace__ecere__com__Method *)__ecereProp___ecereNameSpace__ecere__sys__BTNode_Get_next(((struct __ecereNameSpace__ecere__sys__BTNode *)method));
 if(method->type == 1)
 method->vid += mod->base->vTblSize - baseClass->vTblSize;
+}
 }
 for(b = mod->base; b && b != (((void *)0)); b = b->base)
 {
@@ -1244,21 +1255,7 @@ method->dataTypeString = __ecereNameSpace__ecere__sys__CopyString(vMethod->dataT
 method->_class = vMethod->_class;
 }
 }
-else
-_class->_vTbl[vMethod->vid] = _class->base->_vTbl[vMethod->vid];
-}
-}
-}
-}
-for(b = mod->base; b && b != (((void *)0)); b = b->base)
-{
-struct __ecereNameSpace__ecere__com__Method * vMethod;
-
-for(vMethod = (struct __ecereNameSpace__ecere__com__Method *)__ecereProp___ecereNameSpace__ecere__sys__BinaryTree_Get_first(&b->methods); vMethod; vMethod = (struct __ecereNameSpace__ecere__com__Method *)__ecereProp___ecereNameSpace__ecere__sys__BTNode_Get_next(((struct __ecereNameSpace__ecere__sys__BTNode *)vMethod)))
-{
-if(vMethod->type == 1)
-{
-if(_class->_vTbl[vMethod->vid] == baseClass->_vTbl[vMethod->vid] && _class->_vTbl[vMethod->vid] != _class->base->_vTbl[vMethod->vid])
+else if(needUpdate || _class->_vTbl[vMethod->vid] == b->_vTbl[vMethod->vid])
 _class->_vTbl[vMethod->vid] = _class->base->_vTbl[vMethod->vid];
 }
 }

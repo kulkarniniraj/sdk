@@ -1896,8 +1896,20 @@ static void FixDerivativesBase(Class base, Class mod)
       int offsetClass, totalSizeClass;
 
       for(baseClass = base; baseClass.base; baseClass = baseClass.base);
-      
-      if(base && !base.internalDecl && (base.type == noHeadClass || base.type == structClass || base.type == normalClass)) type = base.type;
+
+      if(base && !base.internalDecl && (base.type == noHeadClass || base.type == structClass || base.type == normalClass))
+      {
+         // Normal classes inheriting off simple classes should become no head classes
+         if(base.type == structClass && type == normalClass)
+            type = noHeadClass;
+         else
+            type = base.type;
+      }
+      if(base && (_class.type == normalClass || _class.type == noHeadClass || _class.type == structClass) &&
+         (base.type == unitClass || base.type == bitClass || base.type == enumClass))
+      {
+         type = base.type;
+      }
 
       if(type == enumClass)
       {
@@ -1971,9 +1983,9 @@ static void FixDerivativesBase(Class base, Class mod)
       {
          Method method, next;
          Class b;
+         bool needUpdate = (mod != (base.templateClass ? base.templateClass : base) || _class.vTblSize != mod.vTblSize;
 
-         if(mod.base && mod.base.base && mod.base.vTblSize > baseClass.vTblSize && 
-            (mod != (base.templateClass ? base.templateClass : base) || _class.vTblSize != mod.vTblSize))
+         if(mod.base && mod.base.base && mod.base.vTblSize > baseClass.vTblSize && needUpdate)
          {
             _class.vTblSize += mod.base.vTblSize - baseClass.vTblSize;
             _class._vTbl = renew _class._vTbl void *[_class.vTblSize];
@@ -1986,6 +1998,7 @@ static void FixDerivativesBase(Class base, Class mod)
                if(method.type == virtualMethod)
                   method.vid += mod.base.vTblSize - baseClass.vTblSize;
             }
+         }
 
             for(b = mod.base; b && b != null; b = b.base)
             {
@@ -2012,13 +2025,14 @@ static void FixDerivativesBase(Class base, Class mod)
                            method._class = vMethod._class;
                         }
                      }
-                     else
+                     else if(needUpdate || _class._vTbl[vMethod.vid] == b._vTbl[vMethod.vid])
                         _class._vTbl[vMethod.vid] = _class.base._vTbl[vMethod.vid];
                   }
                }
             }
-         }
 
+         // Moving out the above block of code outside the if to handle this
+         /*
          // Also doing this now, otherwise overridden methods of base classes from intermediate classes will not be set in higher level class
          // (e.g. OnGetString overridden in Id , Location inheriting from Id, LocationAbbreviation created later inheriting from Location would not get Id's OnGetString)
          for(b = mod.base; b && b != null; b = b.base)
@@ -2028,11 +2042,12 @@ static void FixDerivativesBase(Class base, Class mod)
             {
                if(vMethod.type == virtualMethod)
                {
-                  if(_class._vTbl[vMethod.vid] == baseClass._vTbl[vMethod.vid] && _class._vTbl[vMethod.vid] != _class.base._vTbl[vMethod.vid])
+                  if(_class._vTbl[vMethod.vid] == b._vTbl[vMethod.vid] && _class._vTbl[vMethod.vid] != _class.base._vTbl[vMethod.vid])
                      _class._vTbl[vMethod.vid] = _class.base._vTbl[vMethod.vid];
                }
             }
          }
+         */
       }
 
       // _class.defaultAlignment = base ? base.defaultAlignment : 0;
