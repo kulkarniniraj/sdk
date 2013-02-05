@@ -2154,6 +2154,7 @@ public dllexport Class eSystem_RegisterClass(ClassType type, char * name, char *
 {
    int start = 0, c;
    NameSpace * nameSpace = null;
+   bool force64Bits = (module.application.isGUIApp & 2) ? true : false;
 
    {
       nameSpace = (declMode == publicAccess) ? &module.publicNameSpace : &module.privateNameSpace;
@@ -2548,7 +2549,7 @@ public dllexport Class eSystem_RegisterClass(ClassType type, char * name, char *
          }
          _class.memberID = _class.startMemberID = (base && (type == normalClass || type == noHeadClass || type == structClass)) ? base.memberID : 0;
          if(type == normalClass || type == noHeadClass)
-            _class.offset = (base && base.structSize && base.type != systemClass) ? base.structSize : ((type == noHeadClass) ? 0 : sizeof(class Instance));
+            _class.offset = (base && base.structSize && base.type != systemClass) ? base.structSize : ((type == noHeadClass) ? 0 : (force64Bits ? 24 : sizeof(class Instance)));
          if(type == structClass)
          {
             _class.memberOffset = (base && base.structSize && base.type != systemClass) ? base.structSize : 0;
