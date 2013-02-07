@@ -1665,7 +1665,7 @@ private:
          else
          {
             if(!onlyNodes)
-               ide.outputView.buildBox.Logf("\n%s (%s) - ", GetTargetFileName(config), configName);
+               ide.outputView.buildBox.Logf("\n%s (%s) - ", name, configName);
             if(numErrors)
                ide.outputView.buildBox.Logf("%d %s, ", numErrors, (numErrors > 1) ? $"errors" : $"error");
             else

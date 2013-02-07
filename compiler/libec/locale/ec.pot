@@ -19,11 +19,11 @@ msgstr "%s expected to be derived from method class\n"
 msgid "%s undefined; assuming extern returning int\n"
 msgstr "%s undefined; assuming extern returning int\n"
 
-#: ./src/ecdefs.ec:1259
+#: ./src/ecdefs.ec:1258
 msgid ":%d:%d: error: "
 msgstr ":%d:%d: error: "
 
-#: ./src/ecdefs.ec:1300
+#: ./src/ecdefs.ec:1299
 msgid ":%d:%d: warning: "
 msgstr ":%d:%d: warning: "
 
