@@ -261,10 +261,10 @@ static class AddCharAction : UndoAction
 
    void Undo(EditBox editBox)
    {
-      editBox.GoToPosition(null, (ch == '\n') ? (y + 1) : y, (ch == '\n') ? 0 : (x + 1));
+      editBox.GoToPosition(null, (ch == '\n') ? (y + 1) : y, (ch == '\n') ? 0 : (x + 1) - addedTabs * (editBox.tabSize - 1));
       editBox.BackSpace();
       if(addedTabs || addedSpaces)
-         editBox.DelCh(editBox.line, y, x - (addedSpaces + addedTabs), editBox.line, y, x, false);
+         editBox.DelCh(editBox.line, y, x - (addedSpaces + addedTabs * editBox.tabSize), editBox.line, y, x, false);
       editBox.UpdateDirty();
    }
 
